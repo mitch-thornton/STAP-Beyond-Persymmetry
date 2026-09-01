@@ -26,12 +26,12 @@
 #
 #  Version
 #    Created:       bundle v6, 2026-09-01
-#    Last modified: bundle v7.2, 2026-09-01
+#    Last modified: bundle v7.3, 2026-09-01
 #
 #  Revision history
 #    v6     2026-09-01   created
 #    v7     2026-09-01   tracks make_stap_figs_v4.py
-#    v7.2   2026-09-01   source headers added
+#    v7.3   2026-09-01   source headers added
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>

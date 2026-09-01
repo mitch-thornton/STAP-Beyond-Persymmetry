@@ -33,7 +33,7 @@
 #
 #  Version
 #    Created:       bundle v5, 2026-09-01
-#    Last modified: bundle v7.2, 2026-09-01
+#    Last modified: bundle v7.3, 2026-09-01
 #
 #  Revision history
 #    v5     2026-09-01   created; replaces stap_sinr_v2.py
@@ -42,7 +42,7 @@
 #                        reflection for the persymmetric baseline
 #    v6     2026-09-01   records rogue_inr_db and trial count for
 #                        provenance
-#    v7.2   2026-09-01   source headers added
+#    v7.3   2026-09-01   source headers added
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>

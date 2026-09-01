@@ -29,14 +29,15 @@
 #
 #  Version
 #    Created:       bundle v6, 2026-09-01
-#    Last modified: bundle v7.2, 2026-09-01
+#    Last modified: bundle v7.3, 2026-09-01
 #
 #  Revision history
 #    v6     2026-09-01   created
 #    v6     2026-09-01   emits complete table floats; narrower scaling
 #                        table
 #    v7.1   2026-09-01   generated files carry a provenance header
-#    v7.2   2026-09-01   source headers added
+#    v7.3   2026-09-01   numeric persymmetric row in the ladder table;
+#                        small integers spelled out in prose
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>
@@ -82,6 +83,15 @@ GEN_HEADER = "\n".join([
 
 def fmt(v, nd=2):
     return "n/a" if v is None else f"{v:.{nd}f}"
+
+
+WORDS = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six",
+         7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve"}
+
+
+def spell(n):
+    """Small integers read as words in prose, matching the rest of the text."""
+    return WORDS.get(int(n), str(int(n)))
 
 
 def sci(v, nd=1):
@@ -193,7 +203,7 @@ def main():
               if r["k3_group"]]
     mac("lawRatioLo", fmt(min(ratios)))
     mac("lawRatioHi", fmt(max(ratios)))
-    mac("lawPoints", len(ratios))
+    mac("lawPoints", spell(len(ratios)))
     lr = [r["k3_lsmi"] / (2 * r["J"]) for fam in ("fixed", "growing")
           for r in scal[fam] if r["k3_lsmi"]]
     mac("lsmiRatioLo", fmt(min(lr)))
@@ -223,7 +233,9 @@ def main():
     open(f"{OUT}/numbers.tex", "w").write("\n".join(lines) + "\n")
 
     # ---- table bodies
-    rows = ["persymmetric ($Z_2$) & 2 & $M^2/2$ & n/a & 2.00 \\\\"]
+    # the table is for one array size, so the persymmetric row is numeric too
+    persym_dimC = lad["M"] ** 2 // 2
+    rows = [f"persymmetric ($Z_2$) & 2 & {persym_dimC} & n/a & 2.00 \\\\"]
     for r in lad["rows"]:
         tag = f"$D_{{{r['J']}}}$" + ("" if r["J"] != lad["M"] else " (full)")
         rows.append(f"{tag} & {r['order']} & {r['dimC']} & {r['dimC_orbit_check']} "

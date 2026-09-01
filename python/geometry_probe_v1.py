@@ -27,12 +27,12 @@
 #
 #  Version
 #    Created:       bundle v3
-#    Last modified: bundle v7.2, 2026-09-01
+#    Last modified: bundle v7.3, 2026-09-01
 #
 #  Revision history
 #    v3                  created
 #    v4                  retained as the shared helper
-#    v7.2   2026-09-01   source headers added
+#    v7.3   2026-09-01   source headers added
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>
