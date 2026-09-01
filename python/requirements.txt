@@ -1,0 +1,47 @@
+# ============================================================================
+#  File:        requirements.txt
+#  Project:     Symmetry-Group Covariance Estimation for Adaptive Arrays
+#  Brief:       Third-party Python packages required by the experiment scripts.
+#
+#  Purpose
+#    Pins the minimum package set so a fresh environment can run every
+#    experiment and render every figure.
+#
+#  Description
+#    numpy for the linear algebra, scipy for the special functions used by
+#    the geometry helper, matplotlib for the figures. No package is pinned to
+#    an exact version; the results depend on the fixed random seeds rather
+#    than on library versions.
+#
+#  Inputs
+#    none
+#
+#  Outputs
+#    none
+#
+#  Usage
+#    pip install -r requirements.txt
+#
+#  Version
+#    Created:       bundle v2
+#    Last modified: bundle v7.2, 2026-09-01
+#
+#  Revision history
+#    v2                  created
+#    v7.2   2026-09-01   source headers added
+#
+#  Author
+#    Mitchell A. Thornton  <mitch@smu.edu>
+#    ORCID 0000-0003-3559-9511
+#
+#  License
+#    SPDX-License-Identifier: MIT
+#    The MIT license grants copyright permissions only and grants no
+#    rights under patents. See PATENTS.md.
+#
+#  Copyright (c) 2026 Mitchell A. Thornton
+# ============================================================================
+
+numpy
+scipy
+matplotlib

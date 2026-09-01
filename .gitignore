@@ -1,0 +1,22 @@
+# Build artifacts produced by running the scripts in place.
+__pycache__/
+*.py[cod]
+
+# Result files, figures and generated LaTeX are regenerated, never committed.
+*.json
+figures/
+generated/
+
+# LaTeX by-products, should any document be built alongside.
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+
+# Editor and platform noise.
+.DS_Store
+.idea/
+.vscode/
+*.swp
