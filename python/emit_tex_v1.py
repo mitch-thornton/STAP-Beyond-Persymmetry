@@ -29,7 +29,7 @@
 #
 #  Version
 #    Created:       bundle v6, 2026-09-01
-#    Last modified: bundle v7.3, 2026-09-01
+#    Last modified: bundle v7.4, 2026-09-02
 #
 #  Revision history
 #    v6     2026-09-01   created
@@ -38,6 +38,8 @@
 #    v7.1   2026-09-01   generated files carry a provenance header
 #    v7.3   2026-09-01   numeric persymmetric row in the ladder table;
 #                        small integers spelled out in prose
+#    v7.4   2026-09-02   per-table column padding, so the wide table fits
+#                        the narrower conference column
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>
@@ -101,12 +103,19 @@ def sci(v, nd=1):
     return f"{mant} \\times 10^{{{int(ex)}}}"
 
 
-def write_table(path, rows, colspec, header, caption, label, small=False):
+def write_table(path, rows, colspec, header, caption, label, small=False,
+                colsep=None):
     """Write a complete table float.
 
     The whole float is generated rather than only the body: \\input inside a
     tabular breaks the alignment and TeX reports a misplaced \\noalign, so the
     generated file is inputted at top level instead.
+
+    colsep, when given, narrows the intercolumn padding in points. The setting
+    is made inside the float, so it is local to this table. A wide table needs
+    it when the target column is narrow: at 86 mm a seven-column table does not
+    fit at default padding, and a table that fits one column width will not
+    always fit another.
     """
     body = "\n".join(rows)
     if not body.endswith("\\\\"):
@@ -116,6 +125,8 @@ def write_table(path, rows, colspec, header, caption, label, small=False):
            "\\caption{" + caption + "}",
            "\\label{" + label + "}",
            "\\centering"]
+    if colsep is not None:
+        out.append("\\setlength{\\tabcolsep}{%gpt}" % colsep)
     if small:
         out.append("\\footnotesize" if small == "footnotesize" else "\\small")
     out += ["\\begin{tabular}{" + colspec + "}", "\\toprule", header,
@@ -266,7 +277,7 @@ def main():
         "Snapshots to $3$~dB SINR loss versus aperture, for a fixed and a growing field "
         "symmetry order. LSMI$^\\star$ is diagonal loading at an oracle-tuned level. The "
         "parenthesized value is the prediction $2M/\\deff$ of \\eqref{eq:law}.",
-        "tab:scaling", small="footnotesize")
+        "tab:scaling", small=True, colsep=2.2)
 
     rows = []
     for i, K in enumerate(nmm["Ks"]):

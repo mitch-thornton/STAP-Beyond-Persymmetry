@@ -28,11 +28,11 @@
 #
 #  Version
 #    Created:       bundle v5, 2026-09-01
-#    Last modified: bundle v7.3, 2026-09-01
+#    Last modified: bundle v7.1, 2026-09-01
 #
 #  Revision history
 #    v5     2026-09-01   created
-#    v7.3   2026-09-01   source headers added
+#    v7.1   2026-09-01   source headers added
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>

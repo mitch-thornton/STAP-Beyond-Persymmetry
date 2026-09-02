@@ -30,12 +30,21 @@
 #
 #  Version
 #    Created:       bundle v7, 2026-09-01
-#    Last modified: bundle v7.3, 2026-09-01
+#    Last modified: bundle v7.6, 2026-09-02
 #
 #  Revision history
 #    v7     2026-09-01   created; three single-column figures replace the
 #                        three-panel spanning figure of v6
-#    v7.3   2026-09-01   source headers added
+#    v7.1   2026-09-01   source headers added
+#    v7.4   2026-09-02   explicit log-axis ticks, larger axis fonts and
+#                        headroom for the legends
+#    v7.5   2026-09-02   legends moved above the axes, outside the frame,
+#                        uniformly across the three panels; panel height
+#                        2.50 in
+#    v7.6   2026-09-02   figures saved at exactly the requested size
+#                        under a constrained layout, so the aspect ratio
+#                        no longer depends on how the installed library
+#                        measures the legend
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>
@@ -66,16 +75,17 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 
 # single IEEEtran conference column is about 3.5 in
-FIGSIZE = (3.45, 2.34)
+FIGSIZE = (3.45, 2.50)
 plt.rcParams.update({
-    "font.size": 7.5,
+    "font.size": 8.0,
     "axes.titlesize": 8,
-    "axes.labelsize": 7.5,
-    "xtick.labelsize": 7,
-    "ytick.labelsize": 7,
-    "legend.fontsize": 6.0,
+    "axes.labelsize": 8.0,
+    "xtick.labelsize": 7.5,
+    "ytick.labelsize": 7.5,
+    "legend.fontsize": 6.5,
     "lines.linewidth": 1.2,
     "lines.markersize": 3.4,
 })
@@ -90,15 +100,60 @@ os.makedirs("figures", exist_ok=True)
 
 
 def save(fig, name):
-    fig.tight_layout(pad=0.3)
+    # The constrained layout engine set at figure creation does the fitting, so
+    # there is no tight_layout call here; calling one would switch the engine
+    # and undo the room reserved for the legend.
+    # No tight bounding box. With the legend outside the axes a tight box makes
+    # the saved aspect ratio depend on how the installed matplotlib measures the
+    # legend, and the document scales each figure to the column width, so that
+    # difference becomes page layout. Saving at exactly FIGSIZE makes the height
+    # the document gives a figure the same on every machine.
+    w, h = fig.get_size_inches()
+    assert (round(w, 3), round(h, 3)) == FIGSIZE, (w, h)
     for ext in ("pdf", "png"):
-        fig.savefig(f"figures/{name}.{ext}", bbox_inches="tight", dpi=200)
+        fig.savefig(f"figures/{name}.{ext}", dpi=200)
     plt.close(fig)
     print(f"wrote figures/{name}.pdf")
 
 
+def outside_legend(ax, ncol):
+    """Place the legend above the axes, outside the frame.
+
+    An in-frame legend on these panels covers curve content, and on the
+    matched-symmetry and calibration panels there is no corner it can be moved
+    to that does not. The legend is attached to the figure with an outside
+    location, which the constrained layout engine reserves room for inside the
+    fixed figure size, rather than to the axes with an anchor that would push
+    outside the figure and have to be recovered by a tight bounding box.
+    """
+    fig = ax.get_figure()
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(handles, labels, loc="outside upper center", ncol=ncol,
+               frameon=False, columnspacing=1.1, handlelength=1.7,
+               handletextpad=0.5, borderpad=0.2, labelspacing=0.25)
+
+
+def log_x_ticks(ax, ticks):
+    """Label a log x-axis at the given values only.
+
+    Matplotlib labels minor decades as well when a log axis spans a little
+    over one decade, and at this figure width those labels collide. Fixing
+    the major ticks and dropping the minor ones keeps the axis readable.
+    """
+    ax.xaxis.set_major_locator(mticker.FixedLocator(ticks))
+    ax.xaxis.set_major_formatter(mticker.FixedFormatter([str(t) for t in ticks]))
+    ax.xaxis.set_minor_locator(mticker.NullLocator())
+
+
+def log_y_ticks(ax, ticks):
+    """Label a log y-axis at the given values only."""
+    ax.yaxis.set_major_locator(mticker.FixedLocator(ticks))
+    ax.yaxis.set_major_formatter(mticker.FixedFormatter([str(t) for t in ticks]))
+    ax.yaxis.set_minor_locator(mticker.NullLocator())
+
+
 # ------------------------------------------------------------ Fig. 1: matched
-fig, ax = plt.subplots(figsize=FIGSIZE)
+fig, ax = plt.subplots(figsize=FIGSIZE, layout='constrained')
 for key, lab, mk, col in [('scm', 'sample (SCM)', 's--', '#555555'),
                           ('dl', 'loaded SCM (oracle level)', 'v--', '#2ca02c'),
                           ('persym', 'persymmetric ($Z_2$)', '^--', '#ff7f0e'),
@@ -113,11 +168,12 @@ ax.set_ylim(-14, 1)
 ax.set_xlabel("training snapshots $K$")
 ax.set_ylabel("mean SINR loss (dB)")
 ax.grid(alpha=0.3, which='both')
-ax.legend(loc='lower right')
+log_x_ticks(ax, [2, 4, 8, 16, 32, 64])
+outside_legend(ax, 2)
 save(fig, "fig_matched")
 
 # ------------------------------------------------------- Fig. 2: calibration
-fig, ax = plt.subplots(figsize=FIGSIZE)
+fig, ax = plt.subplots(figsize=FIGSIZE, layout='constrained')
 for key, lab, mk, col in [('lsmi', 'loaded SCM (oracle level)', 'v--', '#2ca02c'),
                           ('group', 'projection ($\\alpha=1$)', 'o-', '#1f77b4'),
                           ('frob', 'shrinkage (Frobenius)', 'D-', '#d62728'),
@@ -128,15 +184,16 @@ ax.plot(NM["Ks"], [np.nan if v is None else v for v in NM['oracle']], ':',
         color='#777777', lw=1.4, label='best $\\alpha$ (oracle)')
 ax.axvline(NM["M"], color='k', ls=':', lw=0.8)
 ax.set_xscale('log')
-ax.set_ylim(-8, 0.5)
+ax.set_ylim(-8.2, 0.5)
 ax.set_xlabel("training snapshots $K$")
 ax.set_ylabel("mean SINR loss (dB)")
 ax.grid(alpha=0.3, which='both')
-ax.legend(loc='lower right')
+log_x_ticks(ax, [4, 8, 16, 32, 64])
+outside_legend(ax, 2)
 save(fig, "fig_calib")
 
 # ----------------------------------------------------------- Fig. 3: scaling
-fig, ax = plt.subplots(figsize=FIGSIZE)
+fig, ax = plt.subplots(figsize=FIGSIZE, layout='constrained')
 Ms = [r["M"] for r in scal["growing"]]
 gro, fix = scal["growing"], scal["fixed"]
 ax.plot(Ms, [r["k3_scm"] for r in gro], 's--', color='#555555',
@@ -153,10 +210,10 @@ ax.plot(Ms, [2 * r["M"] / r["deff"] for r in gro], 'k:', lw=1.3,
         label='$2M/d_{\\rm eff}$')
 ax.plot(Ms, [2 * r["M"] / r["deff"] for r in fix], 'k:', lw=1.3)
 ax.set_yscale('log')
-ax.set_ylim(1.9, 260)
+ax.set_ylim(1.9, 200)
 ax.set_xlabel("array size $M$")
 ax.set_ylabel("snapshots to 3 dB SINR loss")
 ax.grid(alpha=0.3, which='both')
-ax.legend(loc='upper left', ncol=2, columnspacing=0.8, handlelength=1.6,
-          borderpad=0.3, labelspacing=0.25, framealpha=0.92)
+log_y_ticks(ax, [2, 5, 10, 20, 50, 100])
+outside_legend(ax, 2)
 save(fig, "fig_scaling")

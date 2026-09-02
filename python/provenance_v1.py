@@ -26,12 +26,13 @@
 #
 #  Version
 #    Created:       bundle v6, 2026-09-01
-#    Last modified: bundle v7.3, 2026-09-01
+#    Last modified: bundle v7.4, 2026-09-02
 #
 #  Revision history
 #    v6     2026-09-01   created
 #    v7     2026-09-01   tracks make_stap_figs_v4.py
-#    v7.3   2026-09-01   source headers added
+#    v7.1   2026-09-01   source headers added
+#    v7.4   2026-09-02   tracks the abstract emitter and the page checker
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>
@@ -61,7 +62,8 @@ from datetime import datetime, timezone
 
 SCRIPTS = ["stap_sinr_v3.py", "stap_tables_v2.py", "stap_scaling_v1.py",
            "nll_calib_probe_v1.py", "make_stap_figs_v4.py", "emit_tex_v1.py",
-           "apply_headers.py", "sync_github_image.py", "validate_repo.py"]
+           "emit_abstract_v1.py", "apply_headers.py", "sync_github_image.py",
+           "validate_repo.py", "check_pages_v1.py"]
 
 
 def digest(path):

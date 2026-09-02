@@ -32,13 +32,13 @@
 #
 #  Version
 #    Created:       bundle v5, 2026-09-01
-#    Last modified: bundle v7.3, 2026-09-01
+#    Last modified: bundle v7.1, 2026-09-01
 #
 #  Revision history
 #    v5     2026-09-01   created; replaces stap_tables_v1.py
 #    v5     2026-09-01   rank check reports the threshold per group
 #                        rather than a single-snapshot fraction
-#    v7.3   2026-09-01   source headers added
+#    v7.1   2026-09-01   source headers added
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>
