@@ -30,7 +30,7 @@
 #
 #  Version
 #    Created:       bundle v7, 2026-09-01
-#    Last modified: bundle v7.6, 2026-09-02
+#    Last modified: bundle v8, 2026-09-04
 #
 #  Revision history
 #    v7     2026-09-01   created; three single-column figures replace the
@@ -45,6 +45,8 @@
 #                        under a constrained layout, so the aspect ratio
 #                        no longer depends on how the installed library
 #                        measures the legend
+#    v8     2026-09-04   TrueType figure fonts, nine point axis text,
+#                        legends below the axes
 #
 #  Author
 #    Mitchell A. Thornton  <mitch@smu.edu>
@@ -74,18 +76,25 @@ import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
+# The IEEE author kit asks for Type 1 or TrueType. Matplotlib embeds Type 3
+# by default, which is what a PDF compliance check flags.
+matplotlib.rcParams["pdf.fonttype"] = 42
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
 # single IEEEtran conference column is about 3.5 in
 FIGSIZE = (3.45, 2.50)
+# The kit asks for nothing below nine point. The document scales each figure
+# from FIGSIZE to the 3.39 in column, a factor of 0.983, so the sizes here are
+# set a little above the target to land at or above it on the page.
 plt.rcParams.update({
-    "font.size": 8.0,
-    "axes.titlesize": 8,
-    "axes.labelsize": 8.0,
-    "xtick.labelsize": 7.5,
-    "ytick.labelsize": 7.5,
-    "legend.fontsize": 6.5,
+    "font.size": 9.2,
+    "axes.titlesize": 9.2,
+    "axes.labelsize": 9.2,
+    "xtick.labelsize": 9.2,
+    "ytick.labelsize": 9.2,
+    "legend.fontsize": 8.2,
     "lines.linewidth": 1.2,
     "lines.markersize": 3.4,
 })
@@ -117,7 +126,7 @@ def save(fig, name):
 
 
 def outside_legend(ax, ncol):
-    """Place the legend above the axes, outside the frame.
+    """Place the legend below the axes, outside the frame.
 
     An in-frame legend on these panels covers curve content, and on the
     matched-symmetry and calibration panels there is no corner it can be moved
@@ -128,7 +137,7 @@ def outside_legend(ax, ncol):
     """
     fig = ax.get_figure()
     handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels, loc="outside upper center", ncol=ncol,
+    fig.legend(handles, labels, loc="outside lower center", ncol=ncol,
                frameon=False, columnspacing=1.1, handlelength=1.7,
                handletextpad=0.5, borderpad=0.2, labelspacing=0.25)
 
@@ -162,7 +171,7 @@ for key, lab, mk, col in [('scm', 'sample (SCM)', 's--', '#555555'),
     y = [np.nan if v is None else v for v in MA[key]]
     ax.plot(MA["Ks"], y, mk, color=col, label=lab)
 ax.axvline(MA["M"], color='k', ls=':', lw=0.8)
-ax.text(MA["M"] * 1.06, -13.4, '$K=M$', fontsize=6.5)
+ax.text(MA["M"] * 1.06, -13.4, '$K=M$', fontsize=9.2)
 ax.set_xscale('log')
 ax.set_ylim(-14, 1)
 ax.set_xlabel("training snapshots $K$")
@@ -212,7 +221,7 @@ ax.plot(Ms, [2 * r["M"] / r["deff"] for r in fix], 'k:', lw=1.3)
 ax.set_yscale('log')
 ax.set_ylim(1.9, 200)
 ax.set_xlabel("array size $M$")
-ax.set_ylabel("snapshots to 3 dB SINR loss")
+ax.set_ylabel("snapshots to 3 dB")
 ax.grid(alpha=0.3, which='both')
 log_y_ticks(ax, [2, 5, 10, 20, 50, 100])
 outside_legend(ax, 2)
